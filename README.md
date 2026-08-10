@@ -18,7 +18,6 @@ The questions I wanted to answer through my SQL queries were:
 ## Tools I Used
 For my deep dive into the Olist e-commerce dataset, I harnessed the power of several key tools:
 
-- **SQL:** The backbone of my analysis, allowing me to query the database and surface critical insights.
 - **PostgreSQL:** The chosen database management system, ideal for handling the e-commerce dataset across 11 linked tables.
 - **Power BI:** Used to build an interactive 2-page dashboard (Revenue & Customers, Delivery & Payments) connected directly to PostgreSQL via custom SQL queries.
 - **Visual Studio Code:** My go-to for database management and executing SQL queries.
