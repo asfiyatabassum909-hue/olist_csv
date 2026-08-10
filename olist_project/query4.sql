@@ -29,8 +29,8 @@ FROM delivery_days
 SELECT 
     delivery_speed,
     COUNT(*) AS total_orders,
-    AVG(total_days) AS avg_delivery_days,
-    AVG(review_score) AS avg_review_score
+    ROUND(AVG(total_days),2) AS avg_delivery_days,
+    ROUND(AVG(review_score),2) AS avg_review_score
 FROM delivery_buckets
 GROUP BY delivery_speed
 ORDER BY avg_delivery_days
@@ -41,20 +41,20 @@ OUTPUT:
   {
     "delivery_speed": "Fast",
     "total_orders": "30679",
-    "avg_delivery_days": "4.9644708106522377",
-    "avg_review_score": "4.4121060008474853"
+    "avg_delivery_days": "4.96",
+    "avg_review_score": "4.41"
   },
   {
     "delivery_speed": "Normal",
     "total_orders": "37985",
-    "avg_delivery_days": "10.6472554955903646",
-    "avg_review_score": "4.2981440042121890"
+    "avg_delivery_days": "10.65",
+    "avg_review_score": "4.30"
   },
   {
     "delivery_speed": "Slow",
     "total_orders": "27689",
-    "avg_delivery_days": "23.2569612481490845",
-    "avg_review_score": "3.6761529849398678"
+    "avg_delivery_days": "23.26",
+    "avg_review_score": "3.68"
   }
 ]
 */
