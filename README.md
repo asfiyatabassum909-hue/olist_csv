@@ -13,7 +13,7 @@ The questions I wanted to answer through my SQL queries were:
 2. Which product categories generate the most revenue, and how do they compare on review scores?
 3. Who are the top 5 spending customers per state, and which states drive the most revenue?
 4. How does delivery speed (Fast/Normal/Slow) relate to customer satisfaction?
-5. What are the most common payment methods and installment patterns, and how do they correlate with review scores?
+5. What payment methods are most common, how do average installments vary, and how do review scores compare?
 
 ## Tools I Used
 For my deep dive into the Olist e-commerce dataset, I harnessed the power of several key tools:
@@ -95,16 +95,28 @@ WITH total_spend AS (
         c.customer_unique_id,
         c.customer_state,
         SUM(oi.price) AS total_amt,
-        RANK() OVER (PARTITION BY c.customer_state ORDER BY SUM(oi.price) DESC) AS customer_rank
+        RANK() OVER (
+            PARTITION BY c.customer_state
+            ORDER BY SUM(oi.price) DESC
+        ) AS customer_rank
     FROM orders o
     INNER JOIN customers c ON o.customer_id = c.customer_id
     INNER JOIN order_items oi ON o.order_id = oi.order_id
+    WHERE o.order_status = 'delivered'
     GROUP BY c.customer_unique_id, c.customer_state
+),
+state_revenue AS (
+    SELECT
+        *,
+        SUM(total_amt) OVER (
+            PARTITION BY customer_state
+        ) AS total_state_revenue
+    FROM total_spend
 )
 SELECT *
-FROM total_spend
+FROM state_revenue
 WHERE customer_rank <= 5
-ORDER BY customer_state, customer_rank
+ORDER BY total_state_revenue DESC, customer_state, customer_rank;
 ```
 ### OUTPUT
 <img width="1000" height="560" alt="image" src="https://github.com/user-attachments/assets/8afaa2c0-0728-420b-a89f-94d46d55eef3" />
@@ -165,7 +177,7 @@ ORDER BY avg_delivery_days
 - The 0.73-point gap between Fast and Slow delivery reviews suggests a strong relationship between delivery experience and customer satisfaction.
 - Normal deliveries represented the largest delivery group, with 37,985 orders and an average delivery time of 10.65 days.
 
-### 5. Payment Methods & Review Score Correlation
+### 5. Payment Methods, Average Installments & Review Scores
 Aggregated payment type and installments, then correlated with review scores.
 ```
 SELECT 
