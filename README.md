@@ -27,7 +27,7 @@ For my deep dive into the Olist e-commerce dataset, I harnessed the power of sev
 Each query for this project aimed at investigating specific aspects of the e-commerce business. Here's how I approached each question:
 
 ### 1. Monthly Revenue Trend
-To understand how revenue moved over time, I aggregated total order value by month and used a CTE to build a running total alongside it. I then applied the LAG() window function to calculate month-over-month growth percentage, making it easy to spot which months saw acceleration or decline in sales.
+Aggregated monthly revenue with a running total and MoM growth % using LAG().
 
 ```
 WITH monthly_revenue AS (
@@ -54,14 +54,14 @@ ORDER BY month
 
 <img width="1000" height="500" alt="image" src="https://github.com/user-attachments/assets/f413bf85-057b-4d50-b8b2-a0b0bea31a3f" />
 
-**Insights:** 
+💡**Insights:** 
 - Revenue grew from approximately 120K in January 2017 to a peak of 1.01M in November 2017.
 - Monthly revenue remained comparatively strong throughout 2018, generally ranging from about 845K to 997K between February and August.
 - Total cumulative revenue reached 13.59M over the dataset period.
 - The extremely large growth rates at the beginning and end of the dataset are caused by partial or very low-volume months, so they should not be treated as normal business performance.
 
 ### 2. Top Revenue Categories & Review Scores
-Joined the orders, order_items, and products tables to calculate total revenue per product category, then brought in average review scores for each category from order_reviews. The goal was to see whether the categories bringing in the most money were also the ones customers were happiest with — or whether high revenue and high satisfaction didn't necessarily go together.
+Joined orders, items, and products to compare category revenue against review scores.
 
 ```
 SELECT 
@@ -80,14 +80,14 @@ ORDER BY total DESC
 ### OUTPUT
 <img width="1000" height="560" alt="image" src="https://github.com/user-attachments/assets/66948f1d-3014-4307-a4a7-4151fbf62164" />
 
-**Insights:**
+💡**Insights:**
 - Health & Beauty was the highest-revenue category, generating approximately 1.25M, followed closely by Watches & Gifts at 1.20M.
 - The three leading categories—Health & Beauty, Watches & Gifts, and Bed Bath & Table—generated approximately 3.49M combined, around 26% of total revenue.
 - High revenue did not always correspond to the highest customer satisfaction. For example, Bed Bath & Table generated 1.04M in revenue but had an average review score of 3.90, while Cool Stuff had a higher score of 4.15 with 630K in revenue.
 - Most of the ten highest-revenue categories maintained average review scores close to or above 4 out of 5.
 
 ### 3. Top 5 Spending Customers Per State
-Joined the customers and orders/order_items tables to calculate total spend per customer, then used RANK() PARTITION BY state to identify the top 5 highest-spending customers within each state. The goal was to see which states generate the most revenue and whether that revenue comes from a broad customer base or is concentrated among a handful of big spenders.
+Used RANK() PARTITION BY state to find the top 5 spenders per state.
 
 ```
 WITH total_spend AS (
@@ -109,14 +109,14 @@ ORDER BY customer_state, customer_rank
 ### OUTPUT
 <img width="1000" height="560" alt="image" src="https://github.com/user-attachments/assets/8afaa2c0-0728-420b-a89f-94d46d55eef3" />
 
-**Insights:**
+💡**Insights:**
 - São Paulo (SP) generated the most revenue at approximately 5.07M, far ahead of every other state.
 - Rio de Janeiro (RJ) and Minas Gerais (MG) followed with approximately 1.76M and 1.55M in revenue, respectively.
 - Together, SP, RJ, and MG generated approximately 8.38M, representing about 62% of total revenue.
 - The highest-spending individual customer was from RJ, with total spending of 13.44K.
 
 ### 4. Delivery Speed vs Customer Satisfaction
-Built a CTE that calculated the gap between estimated and actual delivery dates, then used CASE WHEN to bucket each order into Fast, Normal, or Slow delivery. Compared average review scores across the three buckets to test whether delayed deliveries were actually linked to lower customer satisfaction.
+Bucketed orders into Fast/Normal/Slow delivery and compared average review scores.
 
 ```
 WITH delivery_days AS (
@@ -159,15 +159,14 @@ ORDER BY avg_delivery_days
 | Normal          | 37,985        | 10.65                      | 4.30                       |
 | Slow            | 27,689        | 23.26                      | 3.68                       |
 
-**Insights:**
+💡**Insights:**
 - Fast deliveries received the highest average review score of 4.41 out of 5, while slow deliveries received the lowest score of 3.68.
 - Slow delivery orders took an average of 23.26 days, compared with 4.96 days for fast deliveries.
 - The 0.73-point gap between Fast and Slow delivery reviews suggests a strong relationship between delivery experience and customer satisfaction.
 - Normal deliveries represented the largest delivery group, with 37,985 orders and an average delivery time of 10.65 days.
 
 ### 5. Payment Methods & Review Score Correlation
-Aggregated orders by payment method and installment count, then joined in review scores to see whether how customers paid — single payment vs. installments, credit card vs. other methods — was related to satisfaction.
-
+Aggregated payment type and installments, then correlated with review scores.
 ```
 SELECT 
     payment_type,
@@ -188,7 +187,7 @@ ORDER BY payment_count DESC
 | debit_card     | 1,529           | 1.00                  | 4.17                  |
 | not_defined    | 3               | 1.00                  | 1.67                  |
 
-**Insights:**
+💡**Insights:**
 - Credit cards were the dominant payment method, accounting for 76,600 payment records—approximately 74% of all recorded payments.
 - Credit-card purchases used an average of 3.51 installments, while boleto, voucher, and debit-card payments averaged one installment.
 - Average review scores were very similar across the main payment methods, ranging from 4.00 to 4.17 out of 5. This suggests payment method was not strongly associated with customer satisfaction in this dataset.
